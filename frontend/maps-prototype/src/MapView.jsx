@@ -49,9 +49,13 @@ const MapView = forwardRef(function MapView(_, ref) {
     markersRef.current = [];
   }
 
-  async function showRoutes(from, to) {
+  async function showRoutes(from, to, currentLocation) {
     if (!ORS_KEY) throw new Error("Map search is not configured yet. Add the route service key to continue.");
-    const [start, end] = await Promise.all([geocode(from), geocode(to)]);
+    const useCurrentLocation = from.trim() === "Your current location" && currentLocation;
+    const [start, end] = await Promise.all([
+      useCurrentLocation ? Promise.resolve({ coords: currentLocation, label: from }) : geocode(from),
+      geocode(to),
+    ]);
     const features = await getRoutes(start.coords, end.coords);
     const map = mapRef.current;
     clearRoutes();
@@ -71,7 +75,13 @@ const MapView = forwardRef(function MapView(_, ref) {
 
   function findMe(callback) {
     if (!navigator.geolocation) return callback();
-    navigator.geolocation.getCurrentPosition((position) => { const spot = [position.coords.longitude, position.coords.latitude]; if (youRef.current) youRef.current.remove(); youRef.current = new Marker({ color: "#168b83" }).setLngLat(spot).addTo(mapRef.current); mapRef.current.flyTo({ center: spot, zoom: 15 }); callback("Your current location"); }, () => callback());
+    navigator.geolocation.getCurrentPosition((position) => {
+      const spot = [position.coords.longitude, position.coords.latitude];
+      if (youRef.current) youRef.current.remove();
+      youRef.current = new Marker({ color: "#168b83" }).setLngLat(spot).addTo(mapRef.current);
+      mapRef.current.flyTo({ center: spot, zoom: 15 });
+      callback("Your current location", spot);
+    }, () => callback());
   }
 
   useImperativeHandle(ref, () => ({ showRoutes, findMe }));

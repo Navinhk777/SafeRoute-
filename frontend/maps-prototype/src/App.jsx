@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import MapView from "./MapView";
+import SOS from "./SOS";
 import "./App.css";
 
 const SAMPLE_ROUTES = [
@@ -9,13 +10,13 @@ const SAMPLE_ROUTES = [
 
 export default function App() {
   const mapRef = useRef(null);
+  const currentLocationRef = useRef(null);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [status, setStatus] = useState({ type: "idle", text: "" });
   const [routes, setRoutes] = useState([]);
   const [journey, setJourney] = useState(false);
   const [checkedIn, setCheckedIn] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
 
   async function searchRoutes(event) {
     event?.preventDefault();
@@ -25,7 +26,7 @@ export default function App() {
     }
     setStatus({ type: "loading", text: "Finding route options…" });
     try {
-      const result = await mapRef.current?.showRoutes(from, to);
+      const result = await mapRef.current?.showRoutes(from, to, currentLocationRef.current);
       if (!result?.length) throw new Error("We could not find a route. Try a nearby landmark.");
       setRoutes(result);
       setStatus({ type: "success", text: "Route options are ready. Choose what feels right for you." });
@@ -37,7 +38,8 @@ export default function App() {
 
   function useMyLocation() {
     setStatus({ type: "loading", text: "Finding your location…" });
-    mapRef.current?.findMe((label) => {
+    mapRef.current?.findMe((label, coordinates) => {
+      if (coordinates) currentLocationRef.current = coordinates;
       setFrom(label || "Your current location");
       setStatus({ type: "success", text: "Starting point added." });
     });
@@ -51,6 +53,7 @@ export default function App() {
   return (
     <main className="app-shell">
       <MapView ref={mapRef} />
+      <SOS />
       <header className="topbar">
         <div className="brand-mark" aria-hidden="true">⌁</div>
         <div>
@@ -121,14 +124,13 @@ export default function App() {
           <div className="journey-destination"><span className="input-dot to-dot" aria-hidden="true" /><div><span className="muted small">Going to</span><strong>{to || "Your destination"}</strong></div><span className="eta">On route</span></div>
           <div className="journey-actions">
             <button className={`checkin-button ${checkedIn ? "complete" : ""}`} onClick={() => setCheckedIn(true)}>{checkedIn ? "✓ Checked in" : "I’m okay"}<small>{checkedIn ? "Thanks for letting your contact know" : "Send a quick safety update"}</small></button>
-            <button className="sos-button" onClick={() => setShowHelp(true)}>SOS<small>Need help?</small></button>
+            <div className="journey-help-copy">Emergency help is available with the SOS button.</div>
           </div>
           <button className="end-journey" onClick={() => { setJourney(false); setCheckedIn(false); }}>End journey</button>
           <p className="disclaimer centered">Your location is only shared when you choose to share it.</p>
         </section>
       )}
 
-      {showHelp && <div className="modal-backdrop" role="presentation"><section className="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title"><button className="modal-close" onClick={() => setShowHelp(false)} aria-label="Close help">×</button><div className="help-icon">!</div><p className="section-kicker">You’re not alone</p><h2 id="help-title">Do you need immediate help?</h2><p>We can help you contact a trusted person and share your current location. If you are in immediate danger, contact local emergency services.</p><button className="primary-button emergency-action" onClick={() => { setShowHelp(false); setStatus({ type: "success", text: "Your help request is ready. Add a trusted contact to send it." }); }}>Contact my trusted person</button><button className="text-button" onClick={() => setShowHelp(false)}>Not now</button></section></div>}
     </main>
   );
 }
