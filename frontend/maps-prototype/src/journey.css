@@ -1,0 +1,24 @@
+/* Extra styles for route preview, safety estimates and live directions. */
+.route-card { cursor: pointer; }
+.route-card.previewed { border-color: #a76f3f; box-shadow: 0 0 0 2px rgba(167,111,63,.25); }
+.fact-pill { margin-left: 6px; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #6a6358; background: #f1ebe2; }
+.score-note { margin: 0 0 10px; padding: 8px 10px; border-radius: 10px; font-size: 12px; line-height: 1.4; color: #6d675f; background: #f3eee6; }
+.score-note.warn { color: #8a5a1f; background: #fbf0dc; }
+.route-context.score-higher { color: #527060; }
+.route-context.score-moderate { color: #8a6a22; }
+.route-context.score-lower { color: #a24b3d; }
+.route-context.score-none { color: #8a8378; }
+.journey-score { margin: 10px 0 0; font-size: 12px; font-weight: 700; }
+.journey-score.score-higher { color: #527060; }
+.journey-score.score-moderate { color: #8a6a22; }
+.journey-score.score-lower { color: #a24b3d; }
+.journey-score.score-none { color: #8a8378; }
+.live-card { margin-top: 12px; padding: 14px; border-radius: 14px; background: #e8f0e5; }
+.live-instruction { margin: 0 0 4px; font-size: 18px; font-weight: 800; color: #2f4a3a; line-height: 1.3; }
+.live-meta { margin: 0; font-size: 12px; color: #527060; }
+.live-wait { margin: 12px 0 0; font-size: 13px; color: #756f66; }
+.live-badge.waiting { background: #f3eee6; color: #84796c; }
+.journey-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+.demo-walk { border: 1px dashed #c6b9a6; border-radius: 10px; padding: 8px 12px; background: transparent; color: #84796c; font-size: 12px; cursor: pointer; }
+.live-dot { width: 18px; height: 18px; border-radius: 50%; background: #2f6fed; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(47,111,237,.25), 0 2px 6px rgba(0,0,0,.3); }
+.journey-footer .end-journey { margin: 0; }
