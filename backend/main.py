@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import UploadFile, File, HTTPException
 from darkspot_ai import assess_dark_spot
 from fastapi import FastAPI
@@ -11,7 +12,13 @@ app = FastAPI(
     description="Route safety scoring service",
     version="1.0"
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Report(BaseModel):
     latitude: float
