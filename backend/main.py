@@ -4,6 +4,7 @@ from darkspot_ai import assess_dark_spot
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
+from app.routers.safety_reports import router as safety_reports_router
 
 from safety_scoring import calculate_route_safety
 
@@ -19,7 +20,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+app.include_router(safety_reports_router)
 class Report(BaseModel):
     latitude: float
     longitude: float
